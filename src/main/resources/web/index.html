@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ミニ掲示板 - トップ</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .nav {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .nav a {
+            display: inline-block;
+            margin: 0 10px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .nav a:hover {
+            background-color: #0056b3;
+        }
+        .post {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            background-color: #fafafa;
+        }
+        .post-message {
+            font-size: 16px;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        .post-meta {
+            font-size: 12px;
+            color: #666;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+        .loading {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+        .error {
+            color: #dc3545;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 ミニ掲示板</h1>
+        
+        <div class="nav">
+            <a href="index.html">トップ</a>
+            <a href="post.html">投稿</a>
+            <a href="admin.html">管理</a>
+        </div>
+        
+        <div id="posts-container">
+            <div class="loading">投稿を読み込み中...</div>
+        </div>
+    </div>
+
+    <script>
+        async function loadPosts() {
+            try {
+                const response = await fetch('/api/posts');
+                if (!response.ok) {
+                    throw new Error('投稿の取得に失敗しました');
+                }
+                
+                const posts = await response.json();
+                displayPosts(posts);
+            } catch (error) {
+                console.error('Error loading posts:', error);
+                document.getElementById('posts-container').innerHTML = 
+                    '<div class="error">投稿の読み込みに失敗しました: ' + error.message + '</div>';
+            }
+        }
+        
+        function displayPosts(posts) {
+            const container = document.getElementById('posts-container');
+            
+            if (posts.length === 0) {
+                container.innerHTML = '<div class="loading">まだ投稿がありません。最初の投稿をしてみましょう！</div>';
+                return;
+            }
+            
+            const postsHtml = posts.map(post => `
+                <div class="post">
+                    <div class="post-message">${escapeHtml(post.message)}</div>
+                    <div class="post-meta">
+                        投稿ID: ${post.id} | 
+                        投稿日時: ${new Date(post.timestamp).toLocaleString('ja-JP')}
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = postsHtml;
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // ページ読み込み時に投稿を取得
+        loadPosts();
+        
+        // 5秒ごとに自動更新
+        setInterval(loadPosts, 5000);
+    </script>
+</body>
+</html>

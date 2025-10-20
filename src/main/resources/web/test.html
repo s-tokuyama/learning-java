@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>パラメータ送信テスト</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+        }
+        .success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 パラメータ送信テスト</h1>
+        
+        <div class="form-group">
+            <label for="message">テストメッセージ:</label>
+            <input type="text" id="message" placeholder="テスト用のメッセージを入力してください">
+        </div>
+        
+        <button onclick="testUrlEncoded()">URLSearchParams で送信</button>
+        <button onclick="testFormData()">FormData で送信</button>
+        <button onclick="testJson()">JSON で送信</button>
+        
+        <div id="result" class="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        function showResult(message, isSuccess = true) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = message;
+            resultDiv.className = `result ${isSuccess ? 'success' : 'error'}`;
+            resultDiv.style.display = 'block';
+        }
+        
+        async function testUrlEncoded() {
+            const message = document.getElementById('message').value;
+            if (!message.trim()) {
+                showResult('メッセージを入力してください', false);
+                return;
+            }
+            
+            try {
+                const params = new URLSearchParams();
+                params.append('message', message);
+                
+                const response = await fetch('/api/posts', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: params
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    showResult(`✅ URLSearchParams送信成功！\n投稿ID: ${result.id}\nメッセージ: ${result.message}`);
+                } else {
+                    const error = await response.json();
+                    showResult(`❌ URLSearchParams送信失敗: ${error.error}`, false);
+                }
+            } catch (error) {
+                showResult(`❌ URLSearchParams送信エラー: ${error.message}`, false);
+            }
+        }
+        
+        async function testFormData() {
+            const message = document.getElementById('message').value;
+            if (!message.trim()) {
+                showResult('メッセージを入力してください', false);
+                return;
+            }
+            
+            try {
+                const formData = new FormData();
+                formData.append('message', message);
+                
+                const response = await fetch('/api/posts', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    showResult(`✅ FormData送信成功！\n投稿ID: ${result.id}\nメッセージ: ${result.message}`);
+                } else {
+                    const error = await response.json();
+                    showResult(`❌ FormData送信失敗: ${error.error}`, false);
+                }
+            } catch (error) {
+                showResult(`❌ FormData送信エラー: ${error.message}`, false);
+            }
+        }
+        
+        async function testJson() {
+            const message = document.getElementById('message').value;
+            if (!message.trim()) {
+                showResult('メッセージを入力してください', false);
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/posts', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message: message })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    showResult(`✅ JSON送信成功！\n投稿ID: ${result.id}\nメッセージ: ${result.message}`);
+                } else {
+                    const error = await response.json();
+                    showResult(`❌ JSON送信失敗: ${error.error}`, false);
+                }
+            } catch (error) {
+                showResult(`❌ JSON送信エラー: ${error.message}`, false);
+            }
+        }
+    </script>
+</body>
+</html>
