@@ -1,0 +1,27 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch Mini Bulletin Board",
+            "request": "launch",
+            "mainClass": "com.example.Main",
+            "projectName": "sample-app",
+            "args": "",
+            "vmArgs": "-Ddev.mode=true -Dspring.profiles.active=dev",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen"
+        },
+        {
+            "type": "java",
+            "name": "Launch Mini Bulletin Board (Production)",
+            "request": "launch",
+            "mainClass": "com.example.Main",
+            "projectName": "sample-app",
+            "args": "",
+            "vmArgs": "",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen"
+        }
+    ]
+}

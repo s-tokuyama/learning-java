@@ -40,7 +40,7 @@ buildNumber.properties
 *.iws
 *.iml
 *.ipr
-.vscode/
+# .vscode/  # プロジェクト設定のためコメントアウト
 *.swp
 *.swo
 *~
