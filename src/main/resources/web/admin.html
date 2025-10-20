@@ -121,9 +121,13 @@
         
         <div class="nav">
             <a href="index.html">トップ</a>
-            <a href="post.html">投稿</a>
-            <a href="admin.html">管理</a>
+            <a href="post.html" id="postButton" style="display: none;">投稿</a>
+            <a href="admin.html" id="adminButton" style="display: none;">管理</a>
+            <a href="signin.html" id="loginButton">ログイン</a>
+            <a href="#" id="logoutButton" style="display: none;" onclick="window.uiService.logout()">ログアウト</a>
         </div>
+        
+        <div id="usernameDisplay" style="display: none; text-align: center; margin-bottom: 20px; color: #007bff; font-weight: bold;"></div>
         
         <div id="message-container"></div>
         
@@ -136,15 +140,31 @@
         </div>
     </div>
 
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
     <script>
+        // 認証チェック
+        document.addEventListener('DOMContentLoaded', async () => {
+            // UI初期化を待つ
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            if (!window.uiService.isAuthenticated()) {
+                alert('ログインが必要です。');
+                window.location.href = '/signin.html';
+                return;
+            }
+            
+            if (!window.uiService.isAdmin()) {
+                alert('管理者権限が必要です。');
+                window.location.href = '/index.html';
+                return;
+            }
+        });
+        
         async function loadPosts() {
             try {
-                const response = await fetch('/api/posts');
-                if (!response.ok) {
-                    throw new Error('投稿の取得に失敗しました');
-                }
-                
-                const posts = await response.json();
+                const posts = await window.apiService.get('/api/posts');
                 displayPosts(posts);
                 updateStats(posts.length);
             } catch (error) {
@@ -168,7 +188,7 @@
                         <div class="post-message">${escapeHtml(post.message)}</div>
                         <div class="post-meta">
                             投稿ID: ${post.id} | 
-                            投稿日時: ${new Date(post.timestamp).toLocaleString('ja-JP')}
+                            投稿日時: ${new Date(post.created).toLocaleString('ja-JP')}
                         </div>
                     </div>
                     <div class="post-actions">
@@ -194,15 +214,7 @@
             deleteBtn.textContent = '削除中...';
             
             try {
-                const response = await fetch(`/api/posts/${postId}`, {
-                    method: 'DELETE'
-                });
-                
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || '削除に失敗しました');
-                }
-                
+                await window.apiService.delete(`/api/posts/${postId}`);
                 showMessage('投稿を削除しました。', 'success');
                 
                 // 投稿をリストから削除

@@ -6,5 +6,10 @@
     "java.debug.settings.maxStringLength": 0,
     "java.debug.settings.numericPrecision": 0,
     "java.debug.settings.enableHotCodeReplace": true,
-    "java.debug.settings.forceBuildBeforeLaunch": true
+    "java.debug.settings.forceBuildBeforeLaunch": true,
+    "javascript.validate.enable": true,
+    "typescript.validate.enable": true,
+    "html.validate.scripts": true,
+    "css.validate": true,
+    "json.validate.enable": true
 }

@@ -5,23 +5,37 @@
             "type": "java",
             "name": "Launch Mini Bulletin Board",
             "request": "launch",
-            "mainClass": "com.example.Main",
+            "mainClass": "app.Main",
             "projectName": "sample-app",
             "args": "",
             "vmArgs": "-Ddev.mode=true -Dspring.profiles.active=dev",
             "console": "integratedTerminal",
-            "internalConsoleOptions": "neverOpen"
+            "internalConsoleOptions": "neverOpen",
+            "env": {
+                "JWT_HS256_SECRET": "your-super-secret-jwt-key-change-this-in-production",
+                "JWT_ACCESS_TTL_SEC": "600",
+                "JWT_REFRESH_TTL_SEC": "604800",
+                "REDIS_HOST": "localhost",
+                "REDIS_PORT": "6379"
+            }
         },
         {
             "type": "java",
             "name": "Launch Mini Bulletin Board (Production)",
             "request": "launch",
-            "mainClass": "com.example.Main",
+            "mainClass": "app.Main",
             "projectName": "sample-app",
             "args": "",
             "vmArgs": "",
             "console": "integratedTerminal",
-            "internalConsoleOptions": "neverOpen"
+            "internalConsoleOptions": "neverOpen",
+            "env": {
+                "JWT_HS256_SECRET": "your-super-secret-jwt-key-change-this-in-production",
+                "JWT_ACCESS_TTL_SEC": "600",
+                "JWT_REFRESH_TTL_SEC": "604800",
+                "REDIS_HOST": "localhost",
+                "REDIS_PORT": "6379"
+            }
         }
     ]
 }

@@ -1,12 +1,22 @@
-# ミニ掲示板アプリケーション
+# ミニ掲示板アプリケーション（JWT認証付き）
 
-Grizzly HTTPサーバーとRedisを使用したシンプルな掲示板アプリケーションです。
+Grizzly HTTPサーバーとRedisを使用したJWT認証機能付きの掲示板アプリケーションです。
 
 ## 機能
 
-- **トップ画面 (index.html)**: 投稿一覧の表示
-- **投稿画面 (post.html)**: 新しい投稿の作成
-- **管理画面 (admin.html)**: 投稿の削除
+- **トップ画面 (index.html)**: 投稿一覧の表示（公開）
+- **投稿画面 (post.html)**: 新しい投稿の作成（要ログイン）
+- **管理画面 (admin.html)**: 投稿の削除（管理者のみ）
+- **サインイン画面 (signin.html)**: ユーザーログイン
+- **サインアップ画面 (signup.html)**: 新規ユーザー登録
+
+## 認証機能
+
+- **JWT認証**: アクセストークン（10分）+ リフレッシュトークン（7日）
+- **自動トークン更新**: 期限間近または401エラー時に自動リフレッシュ
+- **単一フライト更新**: 並列リクエスト時の重複更新を防止
+- **権限ベースUI**: ログイン状態と管理者権限に応じたUI制御
+- **セキュアCookie**: リフレッシュトークンはHttpOnly Cookieで管理
 
 ## 技術スタック
 
@@ -15,6 +25,8 @@ Grizzly HTTPサーバーとRedisを使用したシンプルな掲示板アプリ
 - **Redis**: データベース
 - **Jedis**: Redisクライアント
 - **Jackson**: JSON処理
+- **JWT (jjwt)**: 認証トークン
+- **BCrypt**: パスワードハッシュ化
 - **SLF4J + Logback**: ログ機能
 - **HTML/CSS/JavaScript**: フロントエンド
 
@@ -31,12 +43,21 @@ Grizzly HTTPサーバーとRedisを使用したシンプルな掲示板アプリ
 redis-server
 ```
 
-2. プロジェクトをビルド:
+2. 環境変数を設定:
+```bash
+export JWT_HS256_SECRET="your-super-secret-jwt-key-change-this-in-production"
+export JWT_ACCESS_TTL_SEC=600
+export JWT_REFRESH_TTL_SEC=604800
+export REDIS_HOST=localhost
+export REDIS_PORT=6379
+```
+
+3. プロジェクトをビルド:
 ```bash
 mvn clean compile
 ```
 
-3. アプリケーションを実行:
+4. アプリケーションを実行:
 
 **VS Codeでのデバッグ実行（推奨）:**
 - F5キーを押してデバッグ開始
@@ -45,13 +66,15 @@ mvn clean compile
 
 **Mavenでの実行:**
 ```bash
-mvn exec:java
+mvn exec:java -Dexec.mainClass="app.Main"
 ```
 
-4. ブラウザでアクセス:
+5. ブラウザでアクセス:
 - http://localhost:8080 (トップ画面)
-- http://localhost:8080/post.html (投稿画面)
-- http://localhost:8080/admin.html (管理画面)
+- http://localhost:8080/signin.html (サインイン)
+- http://localhost:8080/signup.html (サインアップ)
+- http://localhost:8080/post.html (投稿画面 - 要ログイン)
+- http://localhost:8080/admin.html (管理画面 - 管理者のみ)
 
 ## 🔥 ホットリロード機能
 

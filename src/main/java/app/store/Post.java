@@ -1,4 +1,4 @@
-package com.example;
+package app.store;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -9,16 +9,20 @@ public class Post {
     @JsonProperty("message")
     private String message;
     
-    @JsonProperty("timestamp")
-    private long timestamp;
+    @JsonProperty("created")
+    private long created;
+    
+    @JsonProperty("userId")
+    private String userId;
     
     // デフォルトコンストラクタ（Jackson用）
     public Post() {}
     
-    public Post(String id, String message, long timestamp) {
+    public Post(String id, String message, long created, String userId) {
         this.id = id;
         this.message = message;
-        this.timestamp = timestamp;
+        this.created = created;
+        this.userId = userId;
     }
     
     // Getters and Setters
@@ -38,12 +42,20 @@ public class Post {
         this.message = message;
     }
     
-    public long getTimestamp() {
-        return timestamp;
+    public long getCreated() {
+        return created;
     }
     
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
+    public void setCreated(long created) {
+        this.created = created;
+    }
+    
+    public String getUserId() {
+        return userId;
+    }
+    
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
     
     @Override
@@ -51,7 +63,8 @@ public class Post {
         return "Post{" +
                 "id='" + id + '\'' +
                 ", message='" + message + '\'' +
-                ", timestamp=" + timestamp +
+                ", created=" + created +
+                ", userId='" + userId + '\'' +
                 '}';
     }
 }
